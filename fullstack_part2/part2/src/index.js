@@ -13,8 +13,8 @@ const Course = ({ course }) => {
           </li>
         )}
       </ul>
+    <p>Total {coursePart.reduce((sum, order) => sum + order.exercises,0)}</p>
     </div>
-
   )
 }
 
