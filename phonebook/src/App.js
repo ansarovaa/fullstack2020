@@ -5,21 +5,35 @@ const App = () => {
         setPersons] = useState([
         {
             name: 'Arto Hellas',
-            id: 1,
-            number: '27-32-2'
+            number: '040-123456',
+            id: 1
+        }, {
+            name: 'Ada Lovelace',
+            number: '39-44-5323523',
+            id: 2
+        }, {
+            name: 'Dan Abramov',
+            number: '12-43-234345',
+            id: 3
+        }, {
+            name: 'Mary Poppendieck',
+            number: '39-23-6423122',
+            id: 4
         }
     ]) //initial state of names in phone book
     const [newName,
         setNewName] = useState('')
     const [newNumber,
         setNewNumber] = useState('')
+    const [findName,
+        findNameInList] = useState('')
 
     const addNameNumber = (event) => { //function to add new name into phonebook
         event.preventDefault()
         const newObject = {
             name: newName,
-            id: persons.length + 1,
-            number: newNumber
+            number: newNumber,
+            id: persons.length + 1
         }
         const checkName = persons.find(person => person.name === newName)
 
@@ -29,6 +43,7 @@ const App = () => {
 
         setNewName('')
         setNewNumber('')
+        findNameInList('')
 
     }
 
@@ -40,9 +55,27 @@ const App = () => {
         setNewNumber(event.target.value)
     }
 
+    const handleNameFind = (event) => {
+        findNameInList(event.target.value)
+    }
+
+    const showName = (findName.length === 0)
+    ? persons.map(names =>  <p key={names.id}>
+        {names.name} {names.number}
+    </p>)
+    : persons.filter(e => e.name === findName)
+    .map(names =>  <p key={names.id}>
+      {names.name} {names.number}
+  </p>)
+
     return (
         <div>
-            <h2>Phonebook</h2>
+            <h1>Phonebook</h1>
+            <div>
+                find name:
+                <input value={findName} onChange={handleNameFind}/>
+            </div>
+            <h2>Add a new</h2>
             <form onSubmit={addNameNumber}>
                 <div>
                     name:
@@ -55,10 +88,7 @@ const App = () => {
                 </div>
             </form>
             <h2>Numbers</h2>
-            {persons.map(names => <p key={names.id}>
-                {names.name} {names.number}
-            </p>)}
-
+            {showName}
         </div>
     )
 }
