@@ -1,4 +1,7 @@
 import React, {useState} from 'react'
+import People from './components/People'
+import AddPeople from './components/AddPeople'
+import FindPeople from './components/FindPeople'
 
 const App = () => {
     const [persons,
@@ -59,36 +62,20 @@ const App = () => {
         findNameInList(event.target.value)
     }
 
-    const showName = (findName.length === 0)
-    ? persons.map(names =>  <p key={names.id}>
-        {names.name} {names.number}
-    </p>)
-    : persons.filter(e => e.name === findName)
-    .map(names =>  <p key={names.id}>
-      {names.name} {names.number}
-  </p>)
-
     return (
         <div>
             <h1>Phonebook</h1>
-            <div>
-                find name:
-                <input value={findName} onChange={handleNameFind}/>
-            </div>
+            <FindPeople findName = {findName} handleNameFind = {handleNameFind}/>
             <h2>Add a new</h2>
-            <form onSubmit={addNameNumber}>
-                <div>
-                    name:
-                    <input value={newName} onChange={handleNameChange}/>
-                </div>
-                <div>number:
-                    <input value={newNumber} onChange={handleNumberChange}/></div>
-                <div>
-                    <button type="submit">add</button>
-                </div>
-            </form>
+            <AddPeople
+                addNameNumber={addNameNumber}
+                newName={newName}
+                handleNameChange={handleNameChange}
+                handleNumberChange={handleNumberChange}
+                newNumber={newNumber}/>
             <h2>Numbers</h2>
-            {showName}
+
+            <People persons={persons} findName={findName}/>
         </div>
     )
 }
