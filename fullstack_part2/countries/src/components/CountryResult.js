@@ -22,8 +22,8 @@ const CountryResult = ({country, setCountry, countries}) => {
                     {
                         searchCountry.map(names => (
                             <li key={names.name}>
-                                {names.name} 
-                            </li>
+                                {names.name} <button onClick={() => setCountry(names.name)}>Show</button>
+                            </li> 
                         ))
                     }
                 </ul>
