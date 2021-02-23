@@ -1,25 +1,26 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
-import Note from './components/Note'
+import FindCountries from './components/FindCountries'
+import CountryResult from './components/CountryResult'
 
 const App = () => {
-  const [notes, setNotes] = useState([]) 
-  const [newNote, setNewNote] = useState('')
-  const [showAll, setShowAll] = useState(true)
+  const [countries, setCountries] = useState([]) 
+  const [country, setCountry] = useState('');
+ 
 
   useEffect(() => {
-    console.log('effect')
     axios
-      .get('http://localhost:3001/notes')
+      .get('https://restcountries.eu/rest/v2/all')
       .then(response => {
-        console.log('promise fulfilled')
-        setNotes(response.data)
-      })
-  }, [])
+        setCountries(response.data)
+        console.log(setCountries(response.data))
+      });
+  
+  }, []);
+console.log(countries);
+  
 
-  console.log('render', notes.length, 'notes')
-
-  const addNote = (event) => {
+  /*const addNote = (event) => {
     event.preventDefault()
     const noteObject = {
       content: newNote,
@@ -61,6 +62,12 @@ const App = () => {
         />
         <button type="submit">save</button>
       </form>   
+    </div>
+  )*/
+  return (
+    <div>
+      <FindCountries country={country} setCountry = {setCountry}/>
+      <CountryResult country={country} countries = {countries}/>
     </div>
   )
 }
