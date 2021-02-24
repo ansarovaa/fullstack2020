@@ -33,6 +33,14 @@ const App = () => {
             number: newNumber,
             id: persons.length + 1
         }
+
+        axios
+        .post('http://localhost:3001/persons', newObject)
+        .then(response => {
+          setPersons(persons.concat(response.data))
+          
+        })
+        
         const checkName = persons.find(person => person.name === newName)
 
         const checkNames = (checkName == undefined)
