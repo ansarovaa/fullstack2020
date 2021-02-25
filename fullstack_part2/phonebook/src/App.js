@@ -1,8 +1,9 @@
-import React, {useState, useEffect } from 'react'
+import React, {useState, useEffect} from 'react'
 import axios from 'axios'
 import People from './components/People'
 import AddPeople from './components/AddPeople'
 import FindPeople from './components/FindPeople'
+import personService from './services/person'
 
 const App = () => {
     const [persons,
@@ -14,17 +15,15 @@ const App = () => {
     const [findName,
         findNameInList] = useState('')
 
-        useEffect(() => {
-            console.log('effect')
-            axios
-              .get('http://localhost:3001/persons')
-              .then(response => {
+    useEffect(() => {
+        console.log('effect')
+        personService
+            .getAll()
+            .then(initialPersons => {
                 console.log('promise fulfilled')
-                setPersons(response.data)
-              })
-          }, [])
-        
-          console.log('render', persons.length, 'persons')
+                setPersons(initialPersons)
+            })
+    }, [])
 
     const addNameNumber = (event) => { //function to add new name into phonebook
         event.preventDefault()
@@ -34,13 +33,12 @@ const App = () => {
             id: persons.length + 1
         }
 
-        axios
-        .post('http://localhost:3001/persons', newObject)
-        .then(response => {
-          setPersons(persons.concat(response.data))
-          
-        })
-        
+        personService
+            .create(newObject)
+            .then(returnedName => {
+                setPersons(persons.concat(returnedName))
+            })
+
         const checkName = persons.find(person => person.name === newName)
 
         const checkNames = (checkName == undefined)
@@ -68,7 +66,7 @@ const App = () => {
     return (
         <div>
             <h1>Phonebook</h1>
-            <FindPeople findName = {findName} handleNameFind = {handleNameFind}/>
+            <FindPeople findName={findName} handleNameFind={handleNameFind}/>
             <h2>Add a new</h2>
             <AddPeople
                 addNameNumber={addNameNumber}
