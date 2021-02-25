@@ -22,11 +22,6 @@
     },
     {
       "name": "Anar",
-      "number": "444",
-      "id": 5
-    },
-    {
-      "name": "Anar",
       "number": "",
       "id": 6
     },
@@ -49,6 +44,11 @@
       "name": "Anar Ansarova",
       "number": "430490930934",
       "id": 10
+    },
+    {
+      "name": "Anar8",
+      "number": "o0",
+      "id": 11
     }
   ]
 }

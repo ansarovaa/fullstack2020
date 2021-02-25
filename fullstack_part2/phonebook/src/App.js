@@ -14,6 +14,10 @@ const App = () => {
         setNewNumber] = useState('')
     const [findName,
         findNameInList] = useState('')
+    const [message,
+        setMessage] = useState(null)
+    const [error,
+        setError] = useState(null)
 
     useEffect(() => {
         console.log('effect')
@@ -51,6 +55,23 @@ const App = () => {
 
     }
 
+    const deletePersonFrom = (id) => {
+        const result = window.confirm("Confirm delete")
+        try {
+            if (result) {
+                personService
+                    .deletePerson(id)
+                    .then(setPersons(persons.filter(person => person.id !== id)))
+            }
+
+        } catch (error) {
+            setError('Error occured')
+            setTimeout(() => {
+                setMessage(null)
+            }, 3000)
+        }
+    }
+
     const handleNameChange = (event) => {
         setNewName(event.target.value)
     }
@@ -76,7 +97,10 @@ const App = () => {
                 newNumber={newNumber}/>
             <h2>Numbers</h2>
 
-            <People persons={persons} findName={findName}/>
+            <People
+                persons={persons}
+                findName={findName}
+                deletePersonFrom={deletePersonFrom}/>
         </div>
     )
 }
