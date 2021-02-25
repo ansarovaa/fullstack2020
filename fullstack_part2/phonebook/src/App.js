@@ -1,9 +1,9 @@
 import React, {useState, useEffect} from 'react'
-import axios from 'axios'
+import personService from './services/person'
 import People from './components/People'
 import AddPeople from './components/AddPeople'
 import FindPeople from './components/FindPeople'
-import personService from './services/person'
+
 
 const App = () => {
     const [persons,
@@ -37,72 +37,92 @@ const App = () => {
             id: persons.length + 1
         }
 
-        personService
-            .create(newObject)
-            .then(returnedName => {
-                setPersons(persons.concat(returnedName))
-            })
+        const names = persons.map(person => person.name)
 
-        const checkName = persons.find(person => person.name === newName)
-
-        const checkNames = (checkName == undefined)
-            ? setPersons(persons.concat(newObject))
-            : alert(`${newName} is already added to phonebook`)
-
-        setNewName('')
-        setNewNumber('')
-        findNameInList('')
-
-    }
-
-    const deletePersonFrom = (id) => {
-        const result = window.confirm("Confirm delete")
-        try {
+        const checkNames = (names.includes(newName))
+        if (checkNames) {
+            const result = window.confirm(`${newName} is already added to phonebook. Replace the phone number with the new one?`)
             if (result) {
+                const checkName = persons.find(person => person.name === newName)
+                checkName.number = newNumber
                 personService
-                    .deletePerson(id)
-                    .then(setPersons(persons.filter(person => person.id !== id)))
+                    .update(checkName.id, checkName)
+                    .then(returned => {
+                        setPersons(persons.map(person => person.id !== returned.id
+                            ? person
+                            : returned))
+                    })
+                    .then(setMessage(`'${newObject.name}' has been updated.`))
+                    .catch(error => {
+                        setError(`${error}`)
+                    })
+                    setTimeout(() => {
+                        setMessage(null)
+                        setError(null)
+                    }, 5000)
             }
 
-        } catch (error) {
-            setError('Error occured')
-            setTimeout(() => {
-                setMessage(null)
-            }, 3000)
+        } else {
+            personService
+                .create(newObject)
+                .then(returnedName => {
+                    setPersons(persons.concat(returnedName))
+                })
+            setNewName('')
+            setNewNumber('')
+            findNameInList('')
         }
     }
 
-    const handleNameChange = (event) => {
-        setNewName(event.target.value)
+        const deletePersonFrom = (id) => {
+            const result = window.confirm("Confirm delete")
+            try {
+                if (result) {
+                    personService
+                        .deletePerson(id)
+                        .then(setPersons(persons.filter(person => person.id !== id)))
+                }
+
+            } catch (error) {
+                setError('Error occured')
+                setTimeout(() => {
+                    setMessage(null)
+                }, 3000)
+            }
+        }
+
+        const handleNameChange = (event) => {
+            setNewName(event.target.value)
+        }
+
+        const handleNumberChange = (event) => {
+            setNewNumber(event.target.value)
+        }
+
+        const handleNameFind = (event) => {
+            findNameInList(event.target.value)
+        }
+
+        return (
+            <div>
+                <h1>Phonebook</h1>
+                <FindPeople findName={findName} handleNameFind={handleNameFind}/>
+                <h2>Add a new</h2>
+                <AddPeople
+                    addNameNumber={addNameNumber}
+                    newName={newName}
+                    handleNameChange={handleNameChange}
+                    handleNumberChange={handleNumberChange}
+                    newNumber={newNumber}/>
+                <h2>Numbers</h2>
+
+                <People
+                    persons={persons}
+                    findName={findName}
+                    deletePersonFrom={deletePersonFrom}/>
+            </div>
+        )
     }
 
-    const handleNumberChange = (event) => {
-        setNewNumber(event.target.value)
-    }
 
-    const handleNameFind = (event) => {
-        findNameInList(event.target.value)
-    }
-
-    return (
-        <div>
-            <h1>Phonebook</h1>
-            <FindPeople findName={findName} handleNameFind={handleNameFind}/>
-            <h2>Add a new</h2>
-            <AddPeople
-                addNameNumber={addNameNumber}
-                newName={newName}
-                handleNameChange={handleNameChange}
-                handleNumberChange={handleNumberChange}
-                newNumber={newNumber}/>
-            <h2>Numbers</h2>
-
-            <People
-                persons={persons}
-                findName={findName}
-                deletePersonFrom={deletePersonFrom}/>
-        </div>
-    )
-}
-
-export default App
+    export default App
