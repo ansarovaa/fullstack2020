@@ -5,7 +5,7 @@ import People from './components/People'
 import AddPeople from './components/AddPeople'
 import FindPeople from './components/FindPeople'
 import Notification from './components/Notification'
-
+import Error from './components/Error'
 
 const App = () => {
     const [persons,
@@ -53,12 +53,10 @@ const App = () => {
                         setPersons(persons.map(person => person.id !== returned.id
                             ? person
                             : returned))
-                        setMessage(
-                                `Updated number for '${newName}'`
-                              )
+                        setMessage(`Updated number for '${newName}'`)
                     })
                     .catch(error => {
-                        setError(`${error}`)
+                        setError(`Information for '${newName}' has been removed from server `)
                     })
                     setTimeout(() => {
                         setMessage(null)
@@ -71,9 +69,7 @@ const App = () => {
                 .create(newObject)
                 .then(returnedName => {
                     setPersons(persons.concat(returnedName))
-                    setMessage(
-                        `Added '${newName}'`
-                      )
+                    setMessage(`Added '${newName}'`)
                 })
             setNewName('')
             setNewNumber('')
@@ -83,19 +79,20 @@ const App = () => {
 
     const deletePersonFrom = (id) => {
         const result = window.confirm("Confirm delete")
-        try {
-            if (result) {
-                personService
-                    .deletePerson(id)
-                    .then(setPersons(persons.filter(person => person.id !== id)))
-            }
 
-        } catch (error) {
-            setError('Error occured')
-            setTimeout(() => {
-                setMessage(null)
-            }, 3000)
+        if (result) {
+            personService
+                .deletePerson(id)
+                .then(setPersons(persons.filter(person => person.id !== id)))
+                .catch(error => {
+                    setError(`Information for '${newName}' has been removed from server`)
+                })
+                setTimeout(() => {
+                    setMessage(null)
+                    setError(null)
+                }, 5000)
         }
+
     }
 
     const handleNameChange = (event) => {
@@ -113,7 +110,8 @@ const App = () => {
     return (
         <div>
             <h1>Phonebook</h1>
-            <Notification message = {message}/>
+            <Notification message={message}/>
+            <Error message={error}/>
             <FindPeople findName={findName} handleNameFind={handleNameFind}/>
             <h2>Add a new</h2>
             <AddPeople
